@@ -1,0 +1,6 @@
+{
+  "name": "PetMind AI",
+  "description": "Plataforma inteligente de adiestramiento, educación canina y salud para mascotas impulsada por IA y expertos etólogos",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

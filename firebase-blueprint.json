@@ -1,0 +1,107 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "Perfil de Usuario",
+      "description": "Información del usuario registrado",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "ID del usuario" },
+        "email": { "type": "string", "description": "Correo electrónico" },
+        "displayName": { "type": "string", "description": "Nombre visible" },
+        "photoURL": { "type": "string", "description": "URL de la foto de perfil" },
+        "membershipId": { "type": "string", "description": "Plan de membresía activo" },
+        "updatedAt": { "type": "string", "description": "Fecha de última actualización" }
+      },
+      "required": ["uid", "email"]
+    },
+    "Pet": {
+      "title": "Mascota",
+      "description": "Ficha y datos de la mascota",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "ID de la mascota" },
+        "name": { "type": "string", "maxLength": 50, "description": "Nombre del perro" },
+        "breed": { "type": "string", "maxLength": 100, "description": "Raza" },
+        "age": { "type": "number", "description": "Edad en años" },
+        "weight": { "type": "number", "description": "Peso en kg" },
+        "behavior": { "type": "string", "description": "Comportamiento principal" },
+        "notes": { "type": "string", "maxLength": 500, "description": "Notas adicionales" },
+        "ownerId": { "type": "string", "description": "UID del propietario" },
+        "createdAt": { "type": "string", "description": "Fecha de creación" }
+      },
+      "required": ["name", "breed", "behavior", "ownerId"]
+    },
+    "TrainingPlan": {
+      "title": "Plan de Adiestramiento",
+      "description": "Plan semanal de adiestramiento generado con IA",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "ID del plan" },
+        "petName": { "type": "string", "description": "Nombre de la mascota" },
+        "breed": { "type": "string", "description": "Raza" },
+        "summary": { "type": "string", "maxLength": 1000, "description": "Resumen del enfoque" },
+        "weeklySchedule": { "type": "array", "description": "Lista de tareas diarias" },
+        "tips": { "type": "array", "description": "Consejos personalizados" },
+        "ownerId": { "type": "string", "description": "UID del usuario" },
+        "createdAt": { "type": "string", "description": "Fecha de generación" }
+      },
+      "required": ["petName", "summary", "weeklySchedule", "ownerId"]
+    },
+    "BookingSession": {
+      "title": "Reserva de Sesión Etológica",
+      "description": "Cita agendada de videollamada 1:1 con etólogo",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "ID de la reserva" },
+        "ethologistId": { "type": "string", "description": "ID del etólogo" },
+        "ethologistName": { "type": "string", "description": "Nombre del etólogo" },
+        "ethologistTitle": { "type": "string", "description": "Título profesional" },
+        "date": { "type": "string", "description": "Fecha de la cita" },
+        "time": { "type": "string", "description": "Hora de la cita" },
+        "topic": { "type": "string", "maxLength": 300, "description": "Motivo de la consulta" },
+        "petName": { "type": "string", "description": "Nombre de la mascota" },
+        "status": { "type": "string", "description": "Estado de la reserva" },
+        "ownerId": { "type": "string", "description": "UID del usuario" },
+        "createdAt": { "type": "string", "description": "Fecha de creación" }
+      },
+      "required": ["ethologistId", "date", "time", "topic", "ownerId"]
+    },
+    "AppNotification": {
+      "title": "Notificación",
+      "description": "Notificación interna del sistema",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "ID de la notificación" },
+        "title": { "type": "string", "description": "Título" },
+        "message": { "type": "string", "description": "Mensaje" },
+        "time": { "type": "string", "description": "Hora o relativo" },
+        "read": { "type": "boolean", "description": "Estado de lectura" },
+        "type": { "type": "string", "description": "Categoría de notificación" },
+        "ownerId": { "type": "string", "description": "UID del destinatario" }
+      },
+      "required": ["title", "message", "ownerId"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Documentos de perfiles de usuario"
+    },
+    "/users/{userId}/pets/{petId}": {
+      "schema": { "$ref": "#/entities/Pet" },
+      "description": "Mascotas asociadas al usuario"
+    },
+    "/users/{userId}/trainingPlans/{planId}": {
+      "schema": { "$ref": "#/entities/TrainingPlan" },
+      "description": "Planes de entrenamiento del usuario"
+    },
+    "/users/{userId}/bookings/{bookingId}": {
+      "schema": { "$ref": "#/entities/BookingSession" },
+      "description": "Citas y reservas etológicas del usuario"
+    },
+    "/users/{userId}/notifications/{notificationId}": {
+      "schema": { "$ref": "#/entities/AppNotification" },
+      "description": "Notificaciones recibidas por el usuario"
+    }
+  }
+}

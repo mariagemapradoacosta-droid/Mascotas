@@ -1,0 +1,74 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    match /users/{userId} {
+      allow get, write: if isOwner(userId) && isValidId(userId);
+
+      match /pets/{petId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidId(petId)
+          && incoming().name is string && incoming().name.size() <= 100
+          && incoming().breed is string && incoming().breed.size() <= 100
+          && incoming().ownerId == request.auth.uid;
+        allow update: if isOwner(userId) && isValidId(petId)
+          && incoming().ownerId == existing().ownerId;
+        allow delete: if isOwner(userId) && isValidId(petId);
+      }
+
+      match /trainingPlans/{planId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidId(planId)
+          && incoming().petName is string && incoming().petName.size() <= 100
+          && incoming().ownerId == request.auth.uid;
+        allow update: if isOwner(userId) && isValidId(planId)
+          && incoming().ownerId == existing().ownerId;
+        allow delete: if isOwner(userId) && isValidId(planId);
+      }
+
+      match /bookings/{bookingId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidId(bookingId)
+          && incoming().ethologistId is string
+          && incoming().ownerId == request.auth.uid;
+        allow update: if isOwner(userId) && isValidId(bookingId)
+          && incoming().ownerId == existing().ownerId;
+        allow delete: if isOwner(userId) && isValidId(bookingId);
+      }
+
+      match /notifications/{notifId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidId(notifId)
+          && incoming().title is string
+          && incoming().ownerId == request.auth.uid;
+        allow update: if isOwner(userId) && isValidId(notifId)
+          && incoming().ownerId == existing().ownerId;
+        allow delete: if isOwner(userId) && isValidId(notifId);
+      }
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
